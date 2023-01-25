@@ -1927,6 +1927,7 @@ if [ "$ITYPE" = "git" ]; then
         case ${OS_NAME_L} in
             openbsd|freebsd|netbsd|darwin )
                 __NEW_VS_TAG_REGEX_MATCH=$(echo "${GIT_REV}" | sed -E 's/^(v?3[0-9]{3}(\.[0-9]{1,2})?).*$/MATCH/')
+                __NEW_VS_TAG_REGEX_MATCH="no_match"
                 if [ "$__NEW_VS_TAG_REGEX_MATCH" = "MATCH" ]; then
                     _POST_NEON_INSTALL=$BS_TRUE
                     __TAG_REGEX_MATCH="${__NEW_VS_TAG_REGEX_MATCH}"
@@ -1942,6 +1943,7 @@ if [ "$ITYPE" = "git" ]; then
                 ;;
             * )
                 __NEW_VS_TAG_REGEX_MATCH=$(echo "${GIT_REV}" | sed 's/^.*\(v\?3[[:digit:]]\{3\}\(\.[[:digit:]]\{1,2\}\)\?\).*$/MATCH/')
+                __NEW_VS_TAG_REGEX_MATCH="no_match"
                 if [ "$__NEW_VS_TAG_REGEX_MATCH" = "MATCH" ]; then
                     _POST_NEON_INSTALL=$BS_TRUE
                     __TAG_REGEX_MATCH="${__NEW_VS_TAG_REGEX_MATCH}"
@@ -4786,13 +4788,13 @@ install_centos_git_post() {
         if [ -f /bin/systemctl ]; then
             if [ ! -f "/usr/lib/systemd/system/salt-${fname}.service" ] || \
                 { [ -f "/usr/lib/systemd/system/salt-${fname}.service" ] && [ "$_FORCE_OVERWRITE" -eq $BS_TRUE ]; }; then
-                __copyfile "${_SALT_GIT_CHECKOUT_DIR}/pkg/rpm/salt-${fname}.service" /usr/lib/systemd/system
+                __copyfile "${_SALT_GIT_CHECKOUT_DIR}/pkg/common/salt-${fname}.service" /usr/lib/systemd/system
             fi
 
             SYSTEMD_RELOAD=$BS_TRUE
         elif [ ! -f "/etc/init.d/salt-$fname" ] || \
             { [ -f "/etc/init.d/salt-$fname" ] && [ "$_FORCE_OVERWRITE" -eq $BS_TRUE ]; }; then
-            __copyfile "${_SALT_GIT_CHECKOUT_DIR}/pkg/rpm/salt-${fname}" /etc/init.d
+            __copyfile "${_SALT_GIT_CHECKOUT_DIR}/pkg/common/salt-${fname}" /etc/init.d
             chmod +x /etc/init.d/salt-${fname}
         fi
     done
